@@ -1,3 +1,5 @@
 discord.py==0.16.12
+validators
 regex
 Scrapy
+requests

@@ -1,11 +1,14 @@
 # Work with Python 3.6
 import discord
 import subprocess
+import validators
 import sys
+import requests
 
 TOKEN = 'NTgwMjU2MTgwNzk5MTQzOTM2.XOOEaA.2wG1z7hrPFyfk8W-MzJ3JUd7qW0'
 
 client = discord.Client()
+
 
 @client.event
 async def on_message(message):
@@ -16,17 +19,31 @@ async def on_message(message):
     if message.content.startswith('!hello'):
         msg = 'Hello {0.author.mention}'.format(message)
         await client.send_message(message.channel, msg)
-	
+
     if message.content.startswith('!pip install'):
         module = message.content.replace('!pip install', '')
-        result = subprocess.run([sys.executable, "-m", "pip", "install", module], stdout = subprocess.PIPE)
+        result = subprocess.run([sys.executable, "-m", "pip", "install", module], stdout=subprocess.PIPE)
         msg = ('{0.author.mention}, pip install output:\n' + result.stdout.decode('utf-8')).format(message)
         await client.send_message(message.channel, msg)
 
     if message.content.startswith("!pip freeze"):
-        result = subprocess.run([sys.executable, "-m", "pip", "freeze"], stdout = subprocess.PIPE)
+        result = subprocess.run([sys.executable, "-m", "pip", "freeze"], stdout=subprocess.PIPE)
         msg = ('{0.author.mention}\n' + result.stdout.decode('utf-8')).format(message)
         await client.send_message(message.channel, msg)
+
+    if message.content.startswith("!import "):
+        script_name, url = message.content.replace("!import ").split(" ")
+        if validators.url(url):
+            r = requests.get(url)
+            with open("\scripts\\" + script_name + ".py", "w") as f:
+                f.write(r.text)
+                f.close()
+            await client.send_message(message.channel, "{0.author.mention} Script imported.".format(message))
+            await client.send_message(message.channel, r.text)
+        else:
+            msg = '{0.author.mention} URL provided is not valid!'.format(message)
+            await client.send_message(message.channel, msg)
+
 
 @client.event
 async def on_ready():
@@ -34,5 +51,6 @@ async def on_ready():
     print(client.user.name)
     print(client.user.id)
     print('------')
+
 
 client.run(TOKEN)
