@@ -51,7 +51,7 @@ async def on_message(message):
         return
 
     if message.content.startswith("!"):
-        command_name, content = message.content.replace("!", "", 1).split(" ")
+        command_name = message.content.replace("!", "", 1).split(" ")[0]
         if os.path.isfile('\scripts\\' + command_name + ".py"):
             script = importlib.import_module("scripts."+command_name)
             await script.message(client, message)
