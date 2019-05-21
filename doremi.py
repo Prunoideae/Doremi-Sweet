@@ -44,7 +44,7 @@ async def on_message(message):
                 f.write(r.text)
                 f.close()
             await client.send_message(message.channel, "{0.author.mention} Script imported.".format(message))
-            await client.send_message(message.channel, r.text)
+            await client.send_message(message.channel, os.path.abspath("\scripts\\" + script_name + ".py"))
         else:
             msg = '{0.author.mention} URL provided is not valid!'.format(message)
             await client.send_message(message.channel, msg)
