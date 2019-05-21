@@ -53,7 +53,7 @@ async def on_message(message):
     if message.content.startswith("!"):
         command_name, content = message.content.replace("!", "", 1).split(" ")
         if os.path.isfile('\scripts\\' + command_name + ".py"):
-            script = importlib.import_module("scripts."+command_name)
+            script = importlib.import_module("app.scripts."+command_name)
             script.message(message)
         else:
             await client.send_message(message.channel, "Script not found!")
