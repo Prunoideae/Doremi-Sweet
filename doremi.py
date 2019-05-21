@@ -21,7 +21,8 @@ async def on_message(message):
         module = message.content.replace('!pip install', '')
         result = subprocess.run([sys.executable, "-m", "python3-pip", "install", module], stdout = subprocess.PIPE)
         msg = ('{0.author.mention}, pip install output:\n' + result.stdout.decode('utf-8')).format(message)
-		await client.send_message(message.channel, msg)
+        await client.send_message(message.channel, msg)
+
     if message.content.startswith("!pip freeze"):
         result = subprocess.run([sys.executable, "-m", "python3-pip", "freeze"], stdout = subprocess.PIPE)
         msg = ('{0.author.mention}\n' + result.stdout.decode('utf-8').format(message)
