@@ -1,6 +1,7 @@
 # Work with Python 3.6
 import discord
 import subprocess
+import sys
 
 TOKEN = 'NTgwMjU2MTgwNzk5MTQzOTM2.XOOEaA.2wG1z7hrPFyfk8W-MzJ3JUd7qW0'
 
