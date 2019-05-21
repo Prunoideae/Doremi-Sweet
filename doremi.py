@@ -1,5 +1,6 @@
 # Work with Python 3.6
 import discord
+import subprocess
 
 TOKEN = 'NTgwMjU2MTgwNzk5MTQzOTM2.XOOEaA.2wG1z7hrPFyfk8W-MzJ3JUd7qW0'
 
@@ -14,6 +15,12 @@ async def on_message(message):
     if message.content.startswith('!hello'):
         msg = 'Hello {0.author.mention}'.format(message)
         await client.send_message(message.channel, msg)
+	
+	if message.content.startswith('!pip install'):
+		module = message.replace('!pip install', '')
+		result = subprocess.run([sys.executable, "-m", "pip", "install", module], stdout = subprocess.PIPE)
+		msg = '{0.author.mention}, pip install output:\n' + result.stdout.decode('utf-8')
+		await client.send_message(message.channel, msg)
 
 @client.event
 async def on_ready():
