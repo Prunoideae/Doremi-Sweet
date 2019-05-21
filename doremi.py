@@ -32,7 +32,7 @@ async def on_message(message):
         await client.send_message(message.channel, msg)
 
     if message.content.startswith("!import "):
-        script_name, url = message.content.replace("!import ").split(" ")
+        script_name, url = message.content.replace("!import ", "").split(" ")
         if validators.url(url):
             r = requests.get(url)
             with open("\scripts\\" + script_name + ".py", "w") as f:
