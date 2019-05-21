@@ -4,6 +4,8 @@ import subprocess
 import validators
 import sys
 import requests
+import os
+import importlib
 
 TOKEN = 'NTgwMjU2MTgwNzk5MTQzOTM2.XOOEaA.2wG1z7hrPFyfk8W-MzJ3JUd7qW0'
 
@@ -19,17 +21,20 @@ async def on_message(message):
     if message.content.startswith('!hello'):
         msg = 'Hello {0.author.mention}'.format(message)
         await client.send_message(message.channel, msg)
+        return
 
     if message.content.startswith('!pip install'):
         module = message.content.replace('!pip install', '')
         result = subprocess.run([sys.executable, "-m", "pip", "install", module], stdout=subprocess.PIPE)
         msg = ('{0.author.mention}, pip install output:\n' + result.stdout.decode('utf-8')).format(message)
         await client.send_message(message.channel, msg)
+        return
 
     if message.content.startswith("!pip freeze"):
         result = subprocess.run([sys.executable, "-m", "pip", "freeze"], stdout=subprocess.PIPE)
         msg = ('{0.author.mention}\n' + result.stdout.decode('utf-8')).format(message)
         await client.send_message(message.channel, msg)
+        return
 
     if message.content.startswith("!import "):
         script_name, url = message.content.replace("!import ", "").split(" ")
@@ -43,7 +48,15 @@ async def on_message(message):
         else:
             msg = '{0.author.mention} URL provided is not valid!'.format(message)
             await client.send_message(message.channel, msg)
+        return
 
+    if message.content.startswith("!"):
+        command_name, content = message.content.replace("!", "", 1).split(" ")
+        if os.path.isfile('\scripts\\' + command_name + ".py"):
+            script = importlib.import_module('\scripts\\' + command_name + ".py")
+            script.message(message)
+        else:
+            await client.send_message(message.channel, "Script not found!")
 
 @client.event
 async def on_ready():
