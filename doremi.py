@@ -9,7 +9,7 @@ import importlib
 
 TOKEN = 'NTgwMjU2MTgwNzk5MTQzOTM2.XOOEaA.2wG1z7hrPFyfk8W-MzJ3JUd7qW0'
 
-pypath = os.path.realpath(__file__)
+pypath = os.path.dirname(os.path.abspath(__file__))
 client = discord.Client()
 
 
