@@ -17,7 +17,7 @@ async def on_message(message):
         await client.send_message(message.channel, msg)
 	
     if message.content.startswith('!pip install'):
-        module = message.replace('!pip install', '')
+        module = message.content.replace('!pip install', '')
         result = subprocess.run([sys.executable, "-m", "pip", "install", module], stdout = subprocess.PIPE)
         msg = '{0.author.mention}, pip install output:\n' + result.stdout.decode('utf-8')
         await client.send_message(message.channel, msg)
