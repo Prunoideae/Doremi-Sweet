@@ -25,7 +25,7 @@ async def on_message(message):
 
     if message.content.startswith("!pip freeze"):
         result = subprocess.run([sys.executable, "-m", "python3-pip", "freeze"], stdout = subprocess.PIPE)
-        msg = ('{0.author.mention}\n' + result.stdout.decode('utf-8').format(message)
+        msg = ('{0.author.mention}\n' + result.stdout.decode('utf-8')).format(message)
         await client.send_message(message.channel, msg)
 
 @client.event
