@@ -36,7 +36,7 @@ async def on_message(message):
         script_name, url = message.content.replace("!import ", "").split(" ")
         if validators.url(url):
             r = requests.get(url)
-            with open("/scripts/" + script_name + ".py", "w+") as f:
+            with open("scripts." + script_name + ".py", "w") as f:
                 f.write(r.text)
                 f.close()
             await client.send_message(message.channel, "{0.author.mention} Script imported.".format(message))
@@ -47,8 +47,8 @@ async def on_message(message):
 
     if message.content.startswith("!"):
         command_name = message.content.replace("!", "", 1).split(" ")[0]
-        if os.path.isfile('/scripts/' + command_name + ".py"):
-            spec = importlib.util.spec_from_file_location(command_name, "/scripts/" + command_name + ".py")
+        if os.path.isfile('scripts.' + command_name + ".py"):
+            spec = importlib.util.spec_from_file_location(command_name, "scripts." + command_name + ".py")
             script = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(script)
             await script.message(client, message)
