@@ -82,8 +82,9 @@ async def backup():
     # clean all the backup files
     file_list = drive.ListFile({'q': "'{}' in parents and trashed=false".format(folder_path)})
     for file_del in file_list:
-        file_representation = drive.CreateFile({'id': file_del['id']})
-        file_representation.Delete()
+        print(file_del)
+        #file_representation = drive.CreateFile({'id': file_del['id']})
+        #file_representation.Delete()
     # re-upload them, I don't care much about network traffic.
     for fn in os.listdir("/app/"):
         if fn.startswith("scripts.") and fn.endswith(".py"):
