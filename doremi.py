@@ -6,9 +6,12 @@ import sys
 import requests
 import os
 import importlib.util
+from pydrive.auth import GoogleAuth
+from pydrive.drive import GoogleDrive
 
 TOKEN = 'NTgwMjU2MTgwNzk5MTQzOTM2.XOOEaA.2wG1z7hrPFyfk8W-MzJ3JUd7qW0'
 
+folder_path = "1B6onBdPfAIGUjj_eEir6xP3Knjz_cCJP"
 client = discord.Client()
 
 
@@ -45,6 +48,12 @@ async def on_message(message):
             await client.send_message(message.channel, msg)
         return
 
+    if message.content.startswith("!backup"):
+        await client.send_message(message.channel, "{0.author.mention} Starting backup process...".format(message))
+        await backup()
+        await client.send_message(message.channel, "{0.author.mention} Completed.".format(message))
+        return
+
     if message.content.startswith("!"):
         command_name = message.content.replace("!", "", 1).split(" ")[0]
         if os.path.isfile('scripts.' + command_name + ".py"):
@@ -62,5 +71,23 @@ async def on_ready():
     print(client.user.name)
     print(client.user.id)
     print('------')
+
+
+# wrapped functions
+async def backup():
+    gauth = GoogleAuth()
+    gauth.LocalWebserverAuth()
+
+    drive = GoogleDrive(gauth)
+    # clean all the backup files
+    file_list = drive.ListFile({'q': "'{}' in parents and trashed=false".format(folder_path)})
+    for file_del in file_list:
+        file_del.Delete()
+    # re-upload them, I don't care much about network traffic.
+    for fn in os.listdir("/app/"):
+        if fn.startswith("scripts.") and fn.endswith(".py"):
+            file = drive.CreateFile({"parents": [{"kind": "drive#fileLink", "id": folder_path}]})
+            file.SetContentFile(fn)
+            file.Upload()
 
 client.run(TOKEN)
