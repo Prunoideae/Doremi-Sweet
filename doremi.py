@@ -83,11 +83,13 @@ async def backup():
     file_list = drive.ListFile({'q': "'{}' in parents and trashed=false".format(folder_path)})
     for file_del in file_list:
         for file_res in file_del:
-            print(file_res['title'])
+            print("Old backup {} removed".format(file_res['title']))
+            file_res.Delete()
 
     # re-upload them, I don't care much about network traffic.
     for fn in os.listdir("/app/"):
         if fn.startswith("scripts.") and fn.endswith(".py"):
+            print("New file {} uploaded".format(fn))
             file = drive.CreateFile({"parents": [{"kind": "drive#fileLink", "id": folder_path}]})
             file.SetContentFile(fn)
             file.Upload()
