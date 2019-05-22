@@ -36,7 +36,7 @@ async def on_message(message):
         script_name, url = message.content.replace("!import ", "").split(" ")
         if validators.url(url):
             r = requests.get(url)
-            with open("/scripts/" + script_name + ".py", "w") as f:
+            with open("/scripts/" + script_name + ".py", "w+") as f:
                 f.write(r.text)
                 f.close()
             await client.send_message(message.channel, "{0.author.mention} Script imported.".format(message))
@@ -63,5 +63,4 @@ async def on_ready():
     print(client.user.id)
     print('------')
 
-os.mkdir("/scripts/")
 client.run(TOKEN)
