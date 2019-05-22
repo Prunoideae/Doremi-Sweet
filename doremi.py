@@ -50,7 +50,7 @@ async def on_message(message):
 
     if message.content.startswith("!backup"):
         await client.send_message(message.channel, "{0.author.mention} Starting backup process...".format(message))
-        await backup()
+        await backup(message)
         await client.send_message(message.channel, "{0.author.mention} Completed.".format(message))
         return
 
@@ -74,7 +74,7 @@ async def on_ready():
 
 
 # wrapped functions
-async def backup():
+async def backup(message=None):
     gauth = GoogleAuth()
     gauth.LocalWebserverAuth()
 
@@ -83,15 +83,24 @@ async def backup():
     file_list = drive.ListFile({'q': "'{}' in parents and trashed=false".format(folder_path)})
     for file_del in file_list:
         for file_res in file_del:
-            print("Old backup {} removed".format(file_res['title']))
+            debug_output = "Old backup {} removed".format(file_res['title'])
+            if message:
+                await client.send_message(message.channel, debug_output)
+            else:
+                print(debug_output)
             file_res.Delete()
 
     # re-upload them, I don't care much about network traffic.
     for fn in os.listdir("/app/"):
         if fn.startswith("scripts.") and fn.endswith(".py"):
-            print("New file {} uploaded".format(fn))
+            debug_output = "New file {} uploaded".format(fn)
+            if message:
+                await client.send_message(message.channel, debug_output)
+            else:
+                print(debug_output)
             file = drive.CreateFile({"parents": [{"kind": "drive#fileLink", "id": folder_path}]})
             file.SetContentFile(fn)
             file.Upload()
+
 
 client.run(TOKEN)
