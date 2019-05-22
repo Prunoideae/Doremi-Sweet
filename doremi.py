@@ -63,4 +63,5 @@ async def on_ready():
     print(client.user.id)
     print('------')
 
+os.mkdir("/scripts/")
 client.run(TOKEN)
