@@ -22,7 +22,8 @@ async def on_message(message):
         module = message.content.replace('!pip install', '')
         result = subprocess.run([sys.executable, "-m", "pip", "install", module], stdout=subprocess.PIPE)
         msg = ('{0.author.mention}, pip install output:\n' + result.stdout.decode('utf-8')).format(message)
-        await client.send_message(message.channel, msg)
+        for strs in msg.split("\n"):
+            await client.send_message(message.channel, msg)
         return
 
     if message.content.startswith("!pip freeze"):
@@ -54,12 +55,14 @@ async def on_message(message):
         else:
             await client.send_message(message.channel, "Script not found!")
 
+
 @client.event
 async def on_ready():
     print('Logged in as')
     print(client.user.name)
     print(client.user.id)
     print('------')
+
 
 os.mkdir("\scripts\\")
 client.run(TOKEN)
