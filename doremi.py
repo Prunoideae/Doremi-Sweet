@@ -55,6 +55,13 @@ async def on_message(message):
         await client.send_message(message.channel, "{0.author.mention} Completed.".format(message))
         return
 
+    if message.content.startswith("!del"):
+        script_name = message.content.replace("!del ", "")
+        if os.path.isfile("script." + script_name + ".py"):
+            os.remove("script." + script_name + ".py")
+        await client.send_message(message.channel,
+                                  ("{0.author.mention} Script." + script_name + " removed.").format(message))
+
     if message.content.startswith("!"):
         command_name = message.content.replace("!", "", 1).split(" ")[0]
         if os.path.isfile('scripts.' + command_name + ".py"):
