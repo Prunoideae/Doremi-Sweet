@@ -74,11 +74,15 @@ async def on_ready():
 
 
 # wrapped functions
-async def backup(message=None):
-    gauth = GoogleAuth()
-    gauth.LocalWebserverAuth()
+async def recover():
+    file_list = drive.ListFile({'q': "'{}' in parents and trashed=false".format(folder_path)})
+    for file_download in file_list:
+        for file_res in file_download:
+            file_res.GetContentFile(file_res['title'])
+            print("Script {} recovered.".format(file_res['title']))
 
-    drive = GoogleDrive(gauth)
+
+async def backup(message=None):
     # clean all the backup files
     file_list = drive.ListFile({'q': "'{}' in parents and trashed=false".format(folder_path)})
     for file_del in file_list:
@@ -103,4 +107,9 @@ async def backup(message=None):
             file.Upload()
 
 
+gauth = GoogleAuth()
+gauth.LocalWebserverAuth()
+drive = GoogleDrive(gauth)
+
+recover()
 client.run(TOKEN)
