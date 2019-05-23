@@ -6,6 +6,7 @@ import sys
 import requests
 import os
 import importlib.util
+import traceback
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
 
@@ -57,10 +58,14 @@ async def on_message(message):
     if message.content.startswith("!"):
         command_name = message.content.replace("!", "", 1).split(" ")[0]
         if os.path.isfile('scripts.' + command_name + ".py"):
-            spec = importlib.util.spec_from_file_location(command_name, "scripts." + command_name + ".py")
-            script = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(script)
-            await script.message(client, message)
+            try:
+                spec = importlib.util.spec_from_file_location(command_name, "scripts." + command_name + ".py")
+                script = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(script)
+                await script.message(client, message)
+            except Exception:
+                err = traceback.format_exc()
+                await client.send_message(message.channel, err)
         else:
             await client.send_message(message.channel, "Script not found!")
 
