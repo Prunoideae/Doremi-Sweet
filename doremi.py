@@ -80,7 +80,11 @@ async def recover():
     for file_download in file_list:
         for file_res in file_download:
             file_res.GetContentFile(file_res['title'])
-            print("Script {} recovered.".format(file_res['title']))
+            if file['title'].startswith('scripts.'):
+                print("Script {} recovered.".format(file_res['title']))
+            else:
+                subprocess.run([sys.executable, "-m", "pip", "install", "-r", "import.requirements.txt"])
+                print("External modules installed.")
 
 
 async def backup(message=None):
@@ -106,6 +110,18 @@ async def backup(message=None):
             file = drive.CreateFile({"parents": [{"kind": "drive#fileLink", "id": folder_path}]})
             file.SetContentFile(fn)
             file.Upload()
+
+    # freeze pip for recovering
+    result = subprocess.run([sys.executable, "-m", "pip", "freeze"], stdout=subprocess.PIPE)
+    with open("import.requirements.txt", "w") as file:
+        file.write(result.stdout.decode('utf-8'))
+        file.close()
+    file_list = drive.ListFile({'q': "name='import.requirements.txt' and trashed=false"}).GetList()
+    for file in file_list:
+        file.Delete()
+    file = drive.CreateFile({"parents": [{"kind": "drive#fileLink", "id": folder_path}]})
+    file.SetContentFile("import.requirements.txt")
+    file.Upload()
 
 
 gauth = GoogleAuth()
