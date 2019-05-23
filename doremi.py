@@ -67,6 +67,7 @@ async def on_message(message):
 
 @client.event
 async def on_ready():
+    await recover()
     print('Logged in as')
     print(client.user.name)
     print(client.user.id)
@@ -111,5 +112,4 @@ gauth = GoogleAuth()
 gauth.LocalWebserverAuth()
 drive = GoogleDrive(gauth)
 
-recover()
 client.run(TOKEN)
