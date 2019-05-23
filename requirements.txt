@@ -1,7 +1,5 @@
 discord.py==0.16.12
 validators
-regex
-Scrapy
 requests
 google-api-python-client
 google-auth-httplib2
